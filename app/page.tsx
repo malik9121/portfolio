@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Menu, X, Mail, Linkedin, Github, Instagram, Youtube, Download, ChevronDown, Send } from 'lucide-react';
+import { Menu, X, Mail, Linkedin, Github, Instagram, Youtube, Download, ChevronDown, Send, Music } from 'lucide-react';
 
 import { AnimatedBorderCard } from '@/components/AnimatedBorderCard';
 
