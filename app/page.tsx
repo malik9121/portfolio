@@ -563,7 +563,7 @@ export default function Portfolio() {
               {[
                 { icon: Mail, href: '#letstalk', label: 'Email' },
                 { icon: Linkedin, href: 'https://linkedin.com/in/muhammad-ehsan-88b232340', label: 'LinkedIn' },
-                { icon: Github, href: 'https://github.com/malik9121', label: 'GitHub' },
+                { icon: Github, href: 'https://github.com/ehsanlabs', label: 'GitHub' },
                 { icon: Instagram, href: 'https://www.instagram.com/ask_tech_ehsan?igsh=YzdzbjF3cGN0bXVq', label: 'Instagram' },
                 { icon: Youtube, href: 'https://youtube.com/@ask_tech_ehsan?si=xIsR5bm9mUIpOi8Y', label: 'YouTube' },
                 { icon: Music, href: 'https://www.tiktok.com/@ask_tech_ehsan?_r=1&_t=ZN-948pB0i1s9O', label: 'TikTok' }
