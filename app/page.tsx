@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { Menu, X, Mail, Linkedin, Github, Instagram, Youtube, Download, ChevronDown, Send, Music } from 'lucide-react';
 import { useForm, ValidationError } from '@formspree/react';
 
@@ -15,9 +15,68 @@ export default function Portfolio() {
   // ✅ Formspree hook
   const [state, handleSubmit] = useForm("xzdayker");
 
+  // Cursor & interaction state
+  const [isClicking, setIsClicking] = useState(false);
+  const [ripples, setRipples] = useState<{ id: number; x: number; y: number }[]>([]);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const mouseX = useMotionValue(-100);
+  const mouseY = useMotionValue(-100);
+  const springX = useSpring(mouseX, { stiffness: 150, damping: 18 });
+  const springY = useSpring(mouseY, { stiffness: 150, damping: 18 });
+  const innerLeft = useTransform(mouseX, (x: number) => x - 5);
+  const innerTop = useTransform(mouseY, (y: number) => y - 5);
+  const outerLeft = useTransform(springX, (x: number) => x - 20);
+  const outerTop = useTransform(springY, (y: number) => y - 20);
+
   useEffect(() => {
     const timer = setTimeout(() => setShowWelcome(false), 3500);
     return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    if (!isTouchDevice) {
+      document.body.style.cursor = 'none';
+      const onMouseMove = (e: MouseEvent) => {
+        mouseX.set(e.clientX);
+        mouseY.set(e.clientY);
+      };
+      const onMouseDown = (e: MouseEvent) => {
+        setIsClicking(true);
+        const id = Date.now();
+        setRipples(prev => [...prev, { id, x: e.clientX, y: e.clientY }]);
+        setTimeout(() => setRipples(prev => prev.filter(r => r.id !== id)), 800);
+      };
+      const onMouseUp = () => setIsClicking(false);
+      window.addEventListener('mousemove', onMouseMove);
+      window.addEventListener('mousedown', onMouseDown);
+      window.addEventListener('mouseup', onMouseUp);
+      return () => {
+        document.body.style.cursor = '';
+        window.removeEventListener('mousemove', onMouseMove);
+        window.removeEventListener('mousedown', onMouseDown);
+        window.removeEventListener('mouseup', onMouseUp);
+      };
+    } else {
+      const onTouchStart = (e: TouchEvent) => {
+        const touch = e.touches[0];
+        const id = Date.now();
+        setRipples(prev => [...prev, { id, x: touch.clientX, y: touch.clientY }]);
+        setTimeout(() => setRipples(prev => prev.filter(r => r.id !== id)), 800);
+      };
+      window.addEventListener('touchstart', onTouchStart, { passive: true });
+      return () => window.removeEventListener('touchstart', onTouchStart);
+    }
+  }, [mouseX, mouseY]);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      setScrollProgress(docHeight > 0 ? (scrollTop / docHeight) * 100 : 0);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   if (showWelcome) {
@@ -116,6 +175,37 @@ export default function Portfolio() {
 
   return (
     <div className="min-h-screen bg-black text-white overflow-x-hidden">
+      {/* Scroll Progress Bar */}
+      <div className="fixed top-0 left-0 w-full h-[3px] z-[100] pointer-events-none">
+        <motion.div
+          className="h-full bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-400"
+          style={{ width: `${scrollProgress}%`, boxShadow: '0 0 8px #22d3ee' }}
+        />
+      </div>
+      {/* Custom Cursor – desktop only */}
+      <motion.div
+        className="fixed pointer-events-none z-[999] rounded-full border-2 border-cyan-400/80 hidden md:block"
+        style={{ left: outerLeft, top: outerTop, width: 40, height: 40 }}
+        animate={{ scale: isClicking ? 0.5 : 1, opacity: isClicking ? 0.5 : 1 }}
+        transition={{ duration: 0.15 }}
+      />
+      <motion.div
+        className="fixed pointer-events-none z-[999] rounded-full bg-cyan-400 hidden md:block"
+        style={{ left: innerLeft, top: innerTop, width: 10, height: 10, boxShadow: '0 0 10px #22d3ee, 0 0 20px rgba(34,211,238,0.5)' }}
+        animate={{ scale: isClicking ? 2 : 1 }}
+        transition={{ duration: 0.1 }}
+      />
+      {/* Click / Touch Ripples */}
+      {ripples.map(r => (
+        <motion.div
+          key={r.id}
+          className="fixed pointer-events-none z-[998] rounded-full border border-cyan-400/70"
+          style={{ left: r.x, top: r.y, width: 10, height: 10, marginLeft: -5, marginTop: -5 }}
+          initial={{ scale: 1, opacity: 0.9 }}
+          animate={{ scale: 16, opacity: 0 }}
+          transition={{ duration: 0.65, ease: 'easeOut' }}
+        />
+      ))}
       {/* Navigation */}
       <nav className="fixed top-0 w-full backdrop-blur-sm bg-black/70 border-b border-cyan-500/20 z-40">
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center h-16">
@@ -417,7 +507,7 @@ export default function Portfolio() {
             <AnimatedBorderCard className="p-6 rounded-xl bg-gradient-to-br from-cyan-500/5 to-blue-500/5 transition-all h-full">
               <div className="text-3xl mb-4">⚡</div>
               <h3 className="text-xl font-bold mb-2">Quick Consultation</h3>
-              <p className="text-2xl font-bold text-cyan-400 mb-2">Rs 3000</p>
+              <p className="text-2xl font-bold text-cyan-400 mb-2">Rs 1000</p>
               <p className="text-sm text-gray-400 mb-4">30 Minutes</p>
               <p className="text-sm text-gray-300 mb-4">Quick code review or specific problem solving.</p>
               <motion.a href="https://wa.me/923234119975?text=I%20need%20a%20Quick%20Consultation%20(Rs%203000)%20-%2030%20minutes" target="_blank" rel="noopener noreferrer" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full inline-flex items-center justify-center py-2 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-lg font-semibold hover:shadow-lg hover:shadow-cyan-500/50 transition-all">
@@ -429,7 +519,7 @@ export default function Portfolio() {
             <AnimatedBorderCard className="p-6 rounded-xl bg-gradient-to-br from-cyan-500/5 to-blue-500/5 transition-all h-full">
               <div className="text-3xl mb-4">🔍</div>
               <h3 className="text-xl font-bold mb-2">Deep Dive Session</h3>
-              <p className="text-2xl font-bold text-cyan-400 mb-2">Rs 5000</p>
+              <p className="text-2xl font-bold text-cyan-400 mb-2">Rs 3000</p>
               <p className="text-sm text-gray-400 mb-4">1 Hour</p>
               <p className="text-sm text-gray-300 mb-4">Comprehensive project review & career roadmap.</p>
               <motion.a href="https://wa.me/923234119975?text=I%20need%20a%20Deep%20Dive%20Session%20(Rs%205000)%20-%201%20hour" target="_blank" rel="noopener noreferrer" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full inline-flex items-center justify-center py-2 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-lg font-semibold hover:shadow-lg hover:shadow-cyan-500/50 transition-all">
