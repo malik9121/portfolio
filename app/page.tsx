@@ -60,6 +60,41 @@ export default function Portfolio() {
     { title: 'Zorix Assistant', category: 'AI', description: 'Zorix — professional AI assistant: scheduling, drafting, summarization, automation, developer support', color: 'from-cyan-500 to-blue-600' }
   ];
 
+  const projects = [
+    {
+      title: 'Brain Tumor MRI Classification (FYP)',
+      tags: ['Python', 'TensorFlow', 'CNN', 'Streamlit'],
+      description: 'CNN model with 93% accuracy on MRI brain scan classification. 4-class: Glioma, Meningioma, Pituitary, No Tumor + Explainable AI.',
+      link: 'https://github.com/ehsanlabs/brain-tumor-mri-classifier-CNN-with-Explainable-AI',
+      icon: '🧠',
+      badge: 'FYP'
+    },
+    {
+      title: 'SMS Spam Detection',
+      tags: ['Python', 'Scikit-learn', 'NLP', 'TF-IDF', 'Logistic Regression'],
+      description: 'Classified SMS messages as Spam/Ham with ~98% accuracy. TF-IDF bigrams + text preprocessing + model saved with Joblib.',
+      link: 'https://github.com/ehsanlabs/sms-spam-detection-naive-bayes-nlp',
+      icon: '📩',
+      badge: null
+    },
+    {
+      title: 'WhatsApp Automation Tool',
+      tags: ['Python', 'PyWhatKit', 'PyAutoGUI'],
+      description: 'Automated WhatsApp messaging — Web-based and ADB-based methods.',
+      link: 'https://github.com/ehsanlabs/whatsapp-automation-python',
+      icon: '💬',
+      badge: null
+    },
+    {
+      title: 'Temperature Converter – Desktop GUI',
+      tags: ['Python', 'Tkinter'],
+      description: 'Desktop app for Celsius to Fahrenheit conversion using Tkinter.',
+      link: 'https://github.com/ehsanlabs/temperature-converter-tkinter-gui',
+      icon: '🌡️',
+      badge: null
+    }
+  ];
+
   const services = [
     { title: 'ML Model Development', desc: 'Custom machine learning solutions with TensorFlow & PyTorch', price: 'Starting at $500', icon: '🤖' },
     { title: 'Web Development', desc: 'High-performance websites built with React & Next.js', price: 'Starting at $300', icon: '💻' },
@@ -88,7 +123,7 @@ export default function Portfolio() {
             Ehsan<span className="text-cyan-400">.</span>
           </motion.div>
           <div className="hidden md:flex space-x-1">
-            {['About', 'Skills', 'Services', 'Resume', 'FAQ', 'Let\'s Talk'].map((item, i) => (
+            {['About', 'Skills', 'Services', 'Projects', 'Resume', 'FAQ', 'Let\'s Talk'].map((item, i) => (
               item === "Let's Talk" ? (
                 <motion.a key={i} href="https://wa.me/923123456789?text=Hi%20Muhammad%20Ehsan,%20I%20want%20to%20discuss%20a%20project" target="_blank" rel="noopener noreferrer" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-lg font-semibold hover:shadow-lg hover:shadow-cyan-500/50 transition-all">
                   {item}
@@ -108,7 +143,7 @@ export default function Portfolio() {
         {isOpen && (
           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="md:hidden bg-black/90 border-t border-cyan-500/20">
             <div className="flex flex-col space-y-2 p-6">
-              {['About', 'Skills', 'Services', 'Resume', 'FAQ', 'Let\'s Talk'].map((item) => (
+              {['About', 'Skills', 'Services', 'Projects', 'Resume', 'FAQ', 'Let\'s Talk'].map((item) => (
                 item === "Let's Talk" ? (
                   <a key={item} href="https://wa.me/923123456789?text=Hi%20Muhammad%20Ehsan,%20I%20want%20to%20discuss%20a%20project" target="_blank" rel="noopener noreferrer" className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-lg font-semibold text-center">{item}</a>
                 ) : (
@@ -279,6 +314,47 @@ export default function Portfolio() {
                   <p className="text-sm text-gray-400 mb-6">{service.desc}</p>
                   <p className="text-sm font-semibold text-cyan-400">{service.price}</p>
                 </div>
+              </AnimatedBorderCard>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* Projects */}
+      <section id="projects" className="py-20 px-6 max-w-7xl mx-auto">
+        <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-4xl font-bold mb-4 text-center">
+          My <span className="text-cyan-400">Projects</span>
+        </motion.h2>
+        <p className="text-center text-gray-400 mb-12">Real-world projects built with passion and precision</p>
+        <div className="grid md:grid-cols-2 gap-6">
+          {projects.map((project, i) => (
+            <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} viewport={{ once: true }} whileHover={{ y: -8 }}>
+              <AnimatedBorderCard className="relative p-6 rounded-xl bg-gradient-to-br from-cyan-500/5 to-blue-500/5 group transition-all h-full flex flex-col">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="text-3xl">{project.icon}</div>
+                    <h3 className="text-lg font-bold group-hover:text-cyan-300 transition-colors">{project.title}</h3>
+                  </div>
+                  {project.badge && (
+                    <span className="px-2 py-1 text-xs font-bold bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full text-white flex-shrink-0 ml-2">{project.badge}</span>
+                  )}
+                </div>
+                <p className="text-sm text-gray-300 mb-4 flex-1">{project.description}</p>
+                <div className="flex flex-wrap gap-2 mb-5">
+                  {project.tags.map((tag, j) => (
+                    <span key={j} className="px-2 py-1 text-xs bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 rounded">{tag}</span>
+                  ))}
+                </div>
+                <motion.a
+                  href={project.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-sm font-semibold rounded-lg hover:shadow-lg hover:shadow-cyan-500/40 transition-all mt-auto"
+                >
+                  <Github size={16} /> View on GitHub
+                </motion.a>
               </AnimatedBorderCard>
             </motion.div>
           ))}
@@ -563,7 +639,7 @@ export default function Portfolio() {
               {[
                 { icon: Mail, href: '#letstalk', label: 'Email' },
                 { icon: Linkedin, href: 'https://linkedin.com/in/muhammad-ehsan-88b232340', label: 'LinkedIn' },
-                { icon: Github, href: 'https://github.com/ehsanlabs', label: 'GitHub' },
+                { icon: Github, href: 'https://github.com/malik9121', label: 'GitHub' },
                 { icon: Instagram, href: 'https://www.instagram.com/ask_tech_ehsan?igsh=YzdzbjF3cGN0bXVq', label: 'Instagram' },
                 { icon: Youtube, href: 'https://youtube.com/@ask_tech_ehsan?si=xIsR5bm9mUIpOi8Y', label: 'YouTube' },
                 { icon: Music, href: 'https://www.tiktok.com/@ask_tech_ehsan?_r=1&_t=ZN-948pB0i1s9O', label: 'TikTok' }
